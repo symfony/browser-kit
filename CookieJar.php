@@ -110,9 +110,13 @@ class CookieJar
 
         $parts = parse_url($uri);
 
+        if(!isset($parts['path'])) {
+            $parts['path'] = '/';
+        }
+
         $cookies = array();
         foreach ($this->cookieJar as $cookie) {
-            if ($cookie->getDomain() && $cookie->getDomain() != substr($parts['host'], -strlen($cookie->getDomain()))) {
+            if ($cookie->getDomain() && $cookie->getDomain() != substr($parts['host'], -strlen($cookie->getDomain())) && ltrim($cookie->getDomain(), '.') != substr($parts['host'], -strlen($cookie->getDomain()))) {
                 continue;
             }
 
