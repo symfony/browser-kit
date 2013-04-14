@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\BrowserKit\Tests;
 
+use Symfony\Component\BrowserKit\Response as DomResponse;
 use Symfony\Component\BrowserKit\Client;
 use Symfony\Component\BrowserKit\History;
 use Symfony\Component\BrowserKit\CookieJar;
