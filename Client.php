@@ -551,6 +551,16 @@ abstract class Client
      */
     protected function getAbsoluteUri($uri)
     {
+        if ($uri instanceof \Guzzle\Http\Message\Header){
+			/** @var  \Guzzle\Http\Message\Header $header */
+			$header = $uri;
+			if ($header->getName() === 'Location') {
+				$headers = $header->toArray();
+				$uri = $headers[0];
+			} else {
+				return $uri;
+			}
+		}
         // already absolute?
         if (0 === strpos($uri, 'http')) {
             return $uri;
