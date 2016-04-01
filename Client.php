@@ -424,6 +424,17 @@ abstract class Client
     }
 
     /**
+     * Change the current crawler to a crawler from a non-request, like an e-mail.
+     *
+     * @param string $html The HTML e-mail's body
+     * @param string $url A fake URL for this fake request
+     */
+    public function setCrawlerFromHtml($html, $url)
+    {
+        return $this->crawler = $this->createCrawlerFromContent($url, $html, 'text/html');
+    }
+
+    /**
      * Goes back in the browser history.
      *
      * @return Crawler
