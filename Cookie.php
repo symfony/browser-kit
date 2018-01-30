@@ -69,7 +69,13 @@ class Cookie
         $this->httponly = $httponly;
 
         if (null !== $expires) {
-            $timestampAsDateTime = \DateTime::createFromFormat('U', $expires);
+
+            if($expires != false) {
+                $timestampAsDateTime = \DateTime::createFromFormat('U', $expires);
+            }  else {
+                $timestampAsDateTime = \DateTime::createFromFormat('U', strtotime('+5 minutes'));
+            }
+            
             if (false === $timestampAsDateTime) {
                 throw new \UnexpectedValueException(sprintf('The cookie expiration time "%s" is not valid.', $expires));
             }
