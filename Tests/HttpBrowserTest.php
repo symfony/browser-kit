@@ -26,18 +26,20 @@ class HttpBrowserTest extends AbstractBrowserTest
 
     /**
      * @dataProvider validContentTypes
+     * @param array<int, mixed> $requestArguments
+     * @param array<int, mixed> $expectedArguments
      */
-    public function testRequestHeaders(array $request, array $exepectedCall)
+    public function testRequestHeaders(array $requestArguments, array $expectedArguments)
     {
         $client = $this->createMock(HttpClientInterface::class);
         $client
             ->expects($this->once())
             ->method('request')
-            ->with(...$exepectedCall)
+            ->with(...$expectedArguments)
             ->willReturn($this->createMock(ResponseInterface::class));
 
         $browser = new HttpBrowser($client);
-        $browser->request(...$request);
+        $browser->request(...$requestArguments);
     }
 
     public function validContentTypes()
@@ -61,7 +63,7 @@ class HttpBrowserTest extends AbstractBrowserTest
         ];
     }
 
-    public function testMultiPartRequest()
+    public function testMultiPartRequestWithSingleFile(): void
     {
         $client = $this->createMock(HttpClientInterface::class);
         $client
