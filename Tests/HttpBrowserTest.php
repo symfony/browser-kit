@@ -26,18 +26,20 @@ class HttpBrowserTest extends AbstractBrowserTest
 
     /**
      * @dataProvider validContentTypes
+     * @param array<int, mixed> $requestArguments
+     * @param array<int, mixed> $expectedArguments
      */
-    public function testRequestHeaders(array $request, array $exepectedCall)
+    public function testRequestHeaders(array $requestArguments, array $expectedArguments)
     {
         $client = $this->createMock(HttpClientInterface::class);
         $client
             ->expects($this->once())
             ->method('request')
-            ->with(...$exepectedCall)
+            ->with(...$expectedArguments)
             ->willReturn($this->createMock(ResponseInterface::class));
 
         $browser = new HttpBrowser($client);
-        $browser->request(...$request);
+        $browser->request(...$requestArguments);
     }
 
     public function validContentTypes()
@@ -61,7 +63,7 @@ class HttpBrowserTest extends AbstractBrowserTest
         ];
     }
 
-    public function testMultiPartRequest()
+    public function testMultiPartRequestWithSingleFile(): void
     {
         $client = $this->createMock(HttpClientInterface::class);
         $client
@@ -80,5 +82,96 @@ class HttpBrowserTest extends AbstractBrowserTest
         $path = tempnam(sys_get_temp_dir(), 'http');
         file_put_contents($path, 'my_file');
         $browser->request('POST', 'http://example.com/', [], ['file' => ['tmp_name' => $path, 'name' => 'foo']]);
+    }
+
+    public function testMultiPartRequestWithNormalFlatArray(): void
+    {
+        $client = $this->createMock(HttpClientInterface::class);
+        $this->expectClientToSendRequestWithFiles($client, ['file1_content', 'file2_content']);
+
+        $browser = new HttpBrowser($client);
+        $browser->request('POST', 'http://example.com/', [], [
+            'file1' => $this->getUploadedFile('file1'),
+            'file2' => $this->getUploadedFile('file2'),
+        ]);
+    }
+
+    public function testMultiPartRequestWithNormalNestedArray(): void
+    {
+        $client = $this->createMock(HttpClientInterface::class);
+        $this->expectClientToSendRequestWithFiles($client, ['file1_content', 'file2_content']);
+
+        $browser = new HttpBrowser($client);
+        $browser->request('POST', 'http://example.com/', [], [
+            'level1' => [
+                'level2' => [
+                    'file1' => $this->getUploadedFile('file1'),
+                    'file2' => $this->getUploadedFile('file2'),
+                ]
+            ],
+        ]);
+    }
+
+    public function testMultiPartRequestWithBracketedArray(): void
+    {
+        $client = $this->createMock(HttpClientInterface::class);
+        $this->expectClientToSendRequestWithFiles($client, ['file1_content', 'file2_content']);
+
+        $browser = new HttpBrowser($client);
+        $browser->request('POST', 'http://example.com/', [], [
+            'form[file1]' => $this->getUploadedFile('file1'),
+            'form[file2]' => $this->getUploadedFile('file2'),
+        ]);
+    }
+
+    public function testMultiPartRequestWithInvalidItem(): void
+    {
+        $client = $this->createMock(HttpClientInterface::class);
+        $this->expectClientToSendRequestWithFiles($client, ['file1_content']);
+
+        $browser = new HttpBrowser($client);
+        $browser->request('POST', 'http://example.com/', [], [
+            'file1' => $this->getUploadedFile('file1'),
+            'file2' => 'INVALID',
+        ]);
+    }
+
+    private function uploadFile(string $data): string
+    {
+        $path = tempnam(sys_get_temp_dir(), 'http');
+        file_put_contents($path, $data);
+        return $path;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function getUploadedFile(string $name): array
+    {
+        return [
+            'tmp_name' => $this->uploadFile($name.'_content'),
+            'name' => $name.'_name',
+        ];
+    }
+
+    /**
+     * @param string[] $fileContents
+     */
+    protected function expectClientToSendRequestWithFiles(HttpClientInterface $client, $fileContents): void
+    {
+        $client
+            ->expects($this->once())
+            ->method('request')
+            ->with('POST', 'http://example.com/', $this->callback(function ($options) use ($fileContents) {
+                $this->assertStringContainsString('Content-Type: multipart/form-data', implode('', $options['headers']));
+                $this->assertInstanceOf('\Generator', $options['body']);
+                $body = implode('', iterator_to_array($options['body'], false));
+                foreach ($fileContents as $content) {
+                    $this->assertStringContainsString($content, $body);
+                }
+
+                return true;
+            }))
+            ->willReturn($this->createMock(ResponseInterface::class));
     }
 }
