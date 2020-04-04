@@ -45,7 +45,7 @@ class HttpBrowser extends AbstractBrowser
         [$body, $extraHeaders] = $this->getBodyAndExtraHeaders($request);
 
         $response = $this->client->request($request->getMethod(), $request->getUri(), [
-            'headers' => array_merge($headers, $extraHeaders),
+            'headers' => $headers + $extraHeaders,
             'body' => $body,
             'max_redirects' => 0,
         ]);
