@@ -71,4 +71,19 @@ class RequestTest extends TestCase
         $request = new Request('http://www.example.com/', 'get', $parameters);
         $this->assertSame($expected, $request->getParameters());
     }
+
+    public function testFalseParameterAreNotConvertedToEmptyString()
+    {
+        $parameters = [
+            'foo' => false,
+        ];
+
+        $notExpected = [
+            'foo' => '',
+        ];
+
+        $request = new Request('http://www.example.com/', 'get', $parameters);
+        $this->assertSame($parameters, $request->getParameters());
+        $this->assertNotSame($notExpected, $request->getParameters());
+    }
 }
