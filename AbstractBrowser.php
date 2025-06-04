@@ -413,13 +413,11 @@ abstract class AbstractBrowser
      *
      * @psalm-param TRequest $request
      *
-     * @return object
-     *
      * @psalm-return TResponse
      *
      * @throws \RuntimeException When processing returns exit code
      */
-    protected function doRequestInProcess(object $request)
+    protected function doRequestInProcess(object $request): object
     {
         $deprecationsFile = tempnam(sys_get_temp_dir(), 'deprec');
         putenv('SYMFONY_DEPRECATIONS_SERIALIZE='.$deprecationsFile);
@@ -452,11 +450,9 @@ abstract class AbstractBrowser
      *
      * @psalm-param TRequest $request
      *
-     * @return object
-     *
      * @psalm-return TResponse
      */
-    abstract protected function doRequest(object $request);
+    abstract protected function doRequest(object $request): object;
 
     /**
      * Returns the script to execute when the request must be insulated.
@@ -465,11 +461,9 @@ abstract class AbstractBrowser
      *
      * @param object $request An origin request instance
      *
-     * @return string
-     *
      * @throws LogicException When this abstract class is not implemented
      */
-    protected function getScript(object $request)
+    protected function getScript(object $request): string
     {
         throw new LogicException('To insulate requests, you need to override the getScript() method.');
     }
@@ -477,11 +471,9 @@ abstract class AbstractBrowser
     /**
      * Filters the BrowserKit request to the origin one.
      *
-     * @return object
-     *
      * @psalm-return TRequest
      */
-    protected function filterRequest(Request $request)
+    protected function filterRequest(Request $request): object
     {
         return $request;
     }
@@ -490,10 +482,8 @@ abstract class AbstractBrowser
      * Filters the origin response to the BrowserKit one.
      *
      * @psalm-param TResponse $response
-     *
-     * @return Response
      */
-    protected function filterResponse(object $response)
+    protected function filterResponse(object $response): Response
     {
         return $response;
     }
