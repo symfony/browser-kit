@@ -701,6 +701,8 @@ class AbstractBrowserTest extends TestCase
         $this->assertArrayHasKey('myfile.foo', $client->getRequest()->getFiles(), '->back() keeps files');
         $this->assertArrayHasKey('X_TEST_FOO', $client->getRequest()->getServer(), '->back() keeps $_SERVER');
         $this->assertSame($content, $client->getRequest()->getContent(), '->back() keeps content');
+        $this->assertTrue($client->getHistory()->isFirstPage());
+        $this->assertFalse($client->getHistory()->isLastPage());
     }
 
     public function testForward()
@@ -741,6 +743,8 @@ class AbstractBrowserTest extends TestCase
         $client->forward();
 
         $this->assertSame('http://www.example.com/redirected', $client->getRequest()->getUri(), '->forward() goes forward in the history skipping redirects');
+        $this->assertTrue($client->getHistory()->isLastPage());
+        $this->assertFalse($client->getHistory()->isFirstPage());
     }
 
     public function testReload()
