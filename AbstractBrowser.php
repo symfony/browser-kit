@@ -461,9 +461,9 @@ abstract class AbstractBrowser
     /**
      * Returns the script to execute when the request must be insulated.
      *
-     * @psalm-param TRequest $request
-     *
      * @param object $request An origin request instance
+     *
+     * @psalm-param TRequest $request
      *
      * @return string
      *
