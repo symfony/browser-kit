@@ -557,7 +557,7 @@ abstract class AbstractBrowser
 
         $request = $this->internalRequest;
 
-        if (\in_array($this->internalResponse->getStatusCode(), [301, 302, 303])) {
+        if (\in_array($this->internalResponse->getStatusCode(), [301, 302, 303], true)) {
             $method = 'GET';
             $files = [];
             $content = null;
