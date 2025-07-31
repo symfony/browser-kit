@@ -11,6 +11,8 @@
 
 namespace Symfony\Component\BrowserKit\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\BrowserKit\CookieJar;
 use Symfony\Component\BrowserKit\Exception\BadMethodCallException;
@@ -650,9 +652,7 @@ class AbstractBrowserTest extends TestCase
         }
     }
 
-    /**
-     * @dataProvider getTestsForMetaRefresh
-     */
+    #[DataProvider('getTestsForMetaRefresh')]
     public function testFollowMetaRefresh(string $content, string $expectedEndingUrl, bool $followMetaRefresh = true)
     {
         $client = $this->getBrowser();
@@ -776,9 +776,7 @@ class AbstractBrowserTest extends TestCase
         $this->assertSame([], $client->getCookieJar()->all(), '->restart() clears the cookies');
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testInsulatedRequests()
     {
         $client = $this->getBrowser();
