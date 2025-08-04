@@ -19,6 +19,7 @@ use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\DomCrawler\Link;
 use Symfony\Component\Process\PhpProcess;
+use Symfony\Component\Process\Process;
 
 /**
  * Simulates a browser.
@@ -114,7 +115,7 @@ abstract class AbstractBrowser
      */
     public function insulate(bool $insulated = true): void
     {
-        if ($insulated && !class_exists(\Symfony\Component\Process\Process::class)) {
+        if ($insulated && !class_exists(Process::class)) {
             throw new LogicException('Unable to isolate requests as the Symfony Process Component is not installed. Try running "composer require symfony/process".');
         }
 
