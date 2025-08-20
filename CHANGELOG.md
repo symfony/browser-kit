@@ -6,6 +6,7 @@ CHANGELOG
 
  * Add `isFirstPage()` and `isLastPage()` methods to the History class for checking navigation boundaries
  * Add PHPUnit constraints: `BrowserHistoryIsOnFirstPage` and `BrowserHistoryIsOnLastPage`
+ * Deprecate `AbstractBrowser::useHtml5Parser()`; Symfony 8 will unconditionally use the native HTML5 parser
 
 6.4
 ---
