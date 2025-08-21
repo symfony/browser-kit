@@ -46,6 +46,7 @@ abstract class AbstractBrowser
     /** @psalm-var TResponse */
     protected object $response;
     protected Crawler $crawler;
+    /** @deprecated since Symfony 7.4, to be removed in Symfony 8 */
     protected bool $useHtml5Parser = true;
     protected bool $insulated = false;
     protected ?string $redirect;
@@ -204,10 +205,16 @@ abstract class AbstractBrowser
     /**
      * Sets whether parsing should be done using "masterminds/html5".
      *
+     * @deprecated since Symfony 7.4, Symfony 8 will unconditionally use the native HTML5 parser
+     *
      * @return $this
      */
     public function useHtml5Parser(bool $useHtml5Parser): static
     {
+        if (\PHP_VERSION_ID >= 80400) {
+            trigger_deprecation('symfony/browser-kit', '7.4', 'Method "%s()" is deprecated. Symfony 8 will unconditionally use the native HTML5 parser.', __METHOD__);
+        }
+
         $this->useHtml5Parser = $useHtml5Parser;
 
         return $this;
