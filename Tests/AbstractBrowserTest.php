@@ -893,6 +893,15 @@ class AbstractBrowserTest extends TestCase
         $client->getInternalRequest();
     }
 
+    public function testHistoryWithParametersAndNoSlash()
+    {
+        $client = $this->getBrowser();
+        $client->request('GET', 'https://www.example.com?the=value');
+        $client->request('GET', '/path/?parameter=value');
+
+        $this->assertSame('https://www.example.com/path/?parameter=value', $client->getRequest()->getUri(), '->request() history provides proper base.');
+    }
+
     public function testFollowRedirectWithoutRequest()
     {
         $browser = $this->getBrowser();
