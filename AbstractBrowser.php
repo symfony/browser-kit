@@ -673,3 +673,5 @@ abstract class AbstractBrowser
         return $host;
     }
 }
+
+// @php-cs-fixer-ignore error_suppression This file is explicitly expected to not silence each of trigger_error calls
