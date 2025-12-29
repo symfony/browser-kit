@@ -48,6 +48,7 @@ abstract class AbstractBrowser
     protected Crawler $crawler;
     /** @deprecated since Symfony 7.4, to be removed in Symfony 8 */
     protected bool $useHtml5Parser = true;
+    protected string|false $wrapContentPattern = false;
     protected bool $insulated = false;
     protected ?string $redirect;
     protected bool $followRedirects = true;
@@ -219,6 +220,17 @@ abstract class AbstractBrowser
 
         return $this;
     }
+
+    /**
+     * Sets the content wrapper format.
+     *
+     * @example <table>%s</table>
+     */
+    public function wrapContent(false|string $pattern): void
+    {
+        $this->wrapContentPattern = $pattern;
+    }
+
 
     /**
      * Returns the current BrowserKit Response instance.
@@ -404,7 +416,11 @@ abstract class AbstractBrowser
             return $this->crawler = $this->followRedirect();
         }
 
-        $this->crawler = $this->createCrawlerFromContent($this->internalRequest->getUri(), $this->internalResponse->getContent(), $this->internalResponse->getHeader('Content-Type') ?? '');
+        $responseContent = $this->internalResponse->getContent();
+        if ($this->wrapContentPattern) {
+            $responseContent = \sprintf($this->wrapContentPattern, $responseContent);
+        }
+        $this->crawler = $this->createCrawlerFromContent($this->internalRequest->getUri(), $responseContent, $this->internalResponse->getHeader('Content-Type') ?? '');
 
         // Check for meta refresh redirect
         if ($this->followMetaRefresh && null !== $redirect = $this->getMetaRefreshUrl()) {
