@@ -108,6 +108,16 @@ class AbstractBrowserTest extends TestCase
         $client->getResponse();
     }
 
+    public function testGetResponseWithWrappedContent()
+    {
+        $client = $this->getBrowser();
+        $client->setNextResponse(new Response('<tr><td>Cell content</td></tr>'));
+        $client->wrapContent('<table>%s</table>');
+        $crawler = $client->request('GET', 'http://example.com/');
+
+        $this->assertStringContainsString('<tr><td>Cell content</td></tr>', $crawler->html());
+    }
+
     public function testGetInternalResponseNull()
     {
         $client = $this->getBrowser();

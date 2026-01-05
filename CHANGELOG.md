@@ -12,6 +12,7 @@ CHANGELOG
  * Add `isFirstPage()` and `isLastPage()` methods to the History class for checking navigation boundaries
  * Add PHPUnit constraints: `BrowserHistoryIsOnFirstPage` and `BrowserHistoryIsOnLastPage`
  * Deprecate `AbstractBrowser::useHtml5Parser()`; Symfony 8 will unconditionally use the native HTML5 parser
+ * Add `AbstractBrowser::wrapContent()` method to wrap response content and give proper context when fetching fragments
 
 6.4
 ---

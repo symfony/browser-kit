@@ -46,6 +46,7 @@ abstract class AbstractBrowser
     /** @psalm-var TResponse */
     protected object $response;
     protected Crawler $crawler;
+    protected string|false $wrapContentPattern = false;
     protected bool $insulated = false;
     protected ?string $redirect;
     protected bool $followRedirects = true;
@@ -199,6 +200,17 @@ abstract class AbstractBrowser
     {
         return $this->crawler ?? throw new BadMethodCallException(\sprintf('The "request()" method must be called before "%s()".', __METHOD__));
     }
+
+    /**
+     * Sets the content wrapper format.
+     *
+     * @example <table>%s</table>
+     */
+    public function wrapContent(false|string $pattern): void
+    {
+        $this->wrapContentPattern = $pattern;
+    }
+
 
     /**
      * Returns the current BrowserKit Response instance.
@@ -384,7 +396,11 @@ abstract class AbstractBrowser
             return $this->crawler = $this->followRedirect();
         }
 
-        $this->crawler = $this->createCrawlerFromContent($this->internalRequest->getUri(), $this->internalResponse->getContent(), $this->internalResponse->getHeader('Content-Type') ?? '');
+        $responseContent = $this->internalResponse->getContent();
+        if ($this->wrapContentPattern) {
+            $responseContent = \sprintf($this->wrapContentPattern, $responseContent);
+        }
+        $this->crawler = $this->createCrawlerFromContent($this->internalRequest->getUri(), $responseContent, $this->internalResponse->getHeader('Content-Type') ?? '');
 
         // Check for meta refresh redirect
         if ($this->followMetaRefresh && null !== $redirect = $this->getMetaRefreshUrl()) {
