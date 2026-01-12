@@ -36,7 +36,7 @@ class HttpBrowserTest extends AbstractBrowserTest
             ->expects($this->once())
             ->method('request')
             ->with(...$expectedArguments)
-            ->willReturn($this->createMock(ResponseInterface::class));
+            ->willReturn($this->createStub(ResponseInterface::class));
 
         $browser = new HttpBrowser($client);
         $browser->request(...$requestArguments);
@@ -104,7 +104,7 @@ class HttpBrowserTest extends AbstractBrowserTest
 
                 return true;
             }))
-            ->willReturn($this->createMock(ResponseInterface::class));
+            ->willReturn($this->createStub(ResponseInterface::class));
 
         $browser = new HttpBrowser($client);
         $path = tempnam(sys_get_temp_dir(), 'http');
@@ -196,7 +196,7 @@ class HttpBrowserTest extends AbstractBrowserTest
             ->expects($this->once())
             ->method('request')
             ->with('GET', 'http://localhost'.$requestPath)
-            ->willReturn($this->createMock(ResponseInterface::class));
+            ->willReturn($this->createStub(ResponseInterface::class));
         $browser = new HttpBrowser($client);
         $browser->request('GET', $requestPath);
     }
@@ -272,7 +272,7 @@ class HttpBrowserTest extends AbstractBrowserTest
 
                 return true;
             }))
-            ->willReturn($this->createMock(ResponseInterface::class));
+            ->willReturn($this->createStub(ResponseInterface::class));
     }
 
     protected function expectClientToNotSendRequestWithFiles(HttpClientInterface $client, $fileContents)
@@ -290,6 +290,6 @@ class HttpBrowserTest extends AbstractBrowserTest
 
                 return true;
             }))
-            ->willReturn($this->createMock(ResponseInterface::class));
+            ->willReturn($this->createStub(ResponseInterface::class));
     }
 }
