@@ -231,7 +231,6 @@ abstract class AbstractBrowser
         $this->wrapContentPattern = $pattern;
     }
 
-
     /**
      * Returns the current BrowserKit Response instance.
      */
